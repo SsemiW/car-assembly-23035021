@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"
-#include "../core/assemble.h"
+#include "../core/Assemble.h"
 
 // =====================================================================
 // C1: SEDAN + CONTINENTAL (엔진·조향 무관, 6가지)

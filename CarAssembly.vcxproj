@@ -127,8 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\assemble.cpp" />
-    <ClCompile Include="src\tests\assemble_test.cpp">
+    <ClCompile Include="src\core\Assemble.cpp" />
+    <ClCompile Include="src\tests\AssembleTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\tests\CarAssemblerTest.cpp">
@@ -143,7 +143,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\assemble.h" />
+    <ClInclude Include="src\core\Assemble.h" />
     <ClInclude Include="src\core\Car.h" />
     <ClInclude Include="src\core\CarAssembler.h" />
     <ClInclude Include="src\core\CarValidator.h" />

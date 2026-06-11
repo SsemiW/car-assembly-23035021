@@ -1,7 +1,7 @@
 #ifdef _DEBUG
 
 #include "gmock/gmock.h"
-#include "core/assemble.h"
+#include "core/Assemble.h"
 
 int main()
 {

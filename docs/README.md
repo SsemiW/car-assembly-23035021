@@ -74,6 +74,8 @@ CarAssembly.slnx 를 Visual Studio에서 열고 빌드
 - 관련 자료: `docs/[CRA_AI] Day2_1_Agentic Engineering.pdf` (p.20~24)
 
 
+---
+
 ## 최종 파일 구조
 
 ```
@@ -82,7 +84,7 @@ CarAssembly/
 └── src/
     ├── main.cpp
     ├── core/
-    │   ├── assemble.h / assemble.cpp      # enum class, CarConfig, isValidCheck()
+    │   ├── Assemble.h / Assemble.cpp      # enum class, CarConfig, isValidCheck()
     │   ├── Car.h / Car.cpp                # 선택된 부품 보유 및 출력
     │   ├── CarAssembler.h / CarAssembler.cpp  # UI 루프 및 Car 조립
     │   └── CarValidator.h / CarValidator.cpp  # 조합 유효성 검증
@@ -90,5 +92,18 @@ CarAssembly/
     │   ├── IEngine.h / IBrakeSystem.h / ISteeringSystem.h  # 부품 인터페이스
     │   └── Engine.h / BrakeSystem.h / SteeringSystem.h     # 구체 부품 클래스
     └── tests/
-        └── assemble_test.cpp              # isValidCheck() 단위 테스트 54개
+        ├── AssembleTest.cpp               # isValidCheck() 단위 테스트 54개
+        ├── CarValidatorTest.cpp           # CarValidator::isValid() 단위 테스트 54개
+        └── CarAssemblerTest.cpp           # validateInput() · buildCar() 단위 테스트 22개
 ```
+
+
+## 단위 테스트 파일 비교
+
+| | `AssembleTest.cpp` | `CarValidatorTest.cpp` | `CarAssemblerTest.cpp` |
+|---|---|---|---|
+| 테스트 대상 | `isValidCheck(CarConfig&)` | `CarValidator::isValid(Car&)` | `validateInput()` · `buildCar()` |
+| 입력 방식 | `CarConfig` 구조체에 enum 값 직접 할당 | `Car` 객체에 부품 포인터 전달 | step·answer 정수값 / `CarConfig` 구조체 |
+| 검증 계층 | 비즈니스 로직 함수 단독 | 클래스 + 부품 인터페이스 체인 전체 | UI 입력 검증 + 부품 매핑 |
+| 추가로 검증하는 것 | 조합 유효성 판단 로직 자체 | 각 구체 부품 클래스의 타입 반환값, `CarValidator`의 변환 경로 | 각 step별 유효 범위, `CarConfig` → `Car` 부품 포인터 매핑 |
+| 케이스 수 | 54개 | 54개 | 22개 |
