@@ -1,11 +1,11 @@
-# CarAssembly 리팩토링 계획
+﻿# CarAssembly 리팩토링 계획
 
 ## 개요
 
 현재 `main.cpp` 하나에 모든 로직이 집중된 절차지향 코드를 단계적으로 리팩토링한다.  
 **테스트 가능한 구조 확보 → 단위 테스트 작성 → 작은 변경(method 수준) → 큰 변경(class 수준)** 순서로 진행하여 각 단계마다 동작을 보장한다.
 
-> **규칙: STEP 3부터는 모든 커밋 전에 STEP 2에서 작성한 단위 테스트 전체(50개)가 통과해야 한다.**  
+> **규칙: STEP 3부터는 모든 커밋 전에 STEP 2에서 작성한 단위 테스트 전체(54개)가 통과해야 한다.**  
 > 테스트가 하나라도 실패하면 해당 변경을 커밋하지 않고 원인을 먼저 수정한다.
 
 ## 단계 요약
@@ -13,7 +13,7 @@
 | 단계 | 범위 | 핵심 변경 | 테스트 조건 | 위험도 |
 |------|------|-----------|-------------|--------|
 | STEP 1 | 테스트 가능한 구조 | enum class·CarConfig 도입, isValidCheck() 인자화, 파일 분리 | 없음 | 낮음 |
-| STEP 2 | 단위 테스트 작성 | isValidCheck() 50개 케이스 작성 | 없음 | 없음 |
+| STEP 2 | 단위 테스트 작성 | isValidCheck() 54개 케이스 작성 | 없음 | 없음 |
 | STEP 3 | 메서드 | delay 교체·네이밍 통일·입력 파싱 개선 | **커밋마다 전체 통과** | 낮음 |
 | STEP 4 | 함수 | printMenu / validateInput / printCarInfo 추출, 중복 제거 | **커밋마다 전체 통과** | 낮음 |
 | STEP 5 | 클래스 | 부품 계층·Car·CarValidator·CarAssembler 분리 | **커밋마다 전체 통과** | 높음 |
@@ -192,7 +192,7 @@ TEST(C5, Truck_GM_Bosch_Mobis)          { EXPECT_FALSE(isValidCheck({CarType::TR
 TEST(C5, Truck_Toyota_Bosch_Mobis)      { EXPECT_FALSE(isValidCheck({CarType::TRUCK, Engine::TOYOTA, BrakeSystem::BOSCH, SteeringSystem::MOBIS})); }
 ```
 
-### 2-6. PASS 케이스 (제약조건에 해당하지 않는 유효 조합, 21가지)
+### 2-6. PASS 케이스 (제약조건에 해당하지 않는 유효 조합, 25가지)
 
 ```cpp
 // --- SEDAN (CONTINENTAL 제외) ---
@@ -236,8 +236,8 @@ TEST(Pass, Truck_Toyota_Bosch_Bosch)    { EXPECT_TRUE(isValidCheck({CarType::TRU
 | FAIL — C3 (TRUCK + WIA) | 6 |
 | FAIL — C4 (TRUCK + MANDO, C3 중복 제외) | 4 |
 | FAIL — C5 (BOSCH brake + MOBIS, C2/C3 중복 제외) | 7 |
-| PASS | 21 |
-| **합계** | **50** |
+| PASS | 25 |
+| **합계** | **54** |
 
 > C2+C5, C3+C4, C3+C5 중복 조합 4가지는 먼저 매칭되는 제약조건 테스트에서만 작성하여  
 > 전체 54가지 조합을 빠짐없이 커버한다.
