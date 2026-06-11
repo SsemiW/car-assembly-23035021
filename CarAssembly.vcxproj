@@ -131,6 +131,9 @@
     <ClCompile Include="src\tests\assemble_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\tests\CarAssemblerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\tests\CarValidatorTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>

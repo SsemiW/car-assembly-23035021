@@ -11,7 +11,7 @@ class CarAssembler
 public:
     void run();
 
-private:
+protected:
     enum Step { CarType_Q, Engine_Q, BrakeSystem_Q, SteeringSystem_Q, Run_Test };
 
     void printMenu(int step) const;
