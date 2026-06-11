@@ -37,6 +37,3 @@ struct CarConfig
 };
 
 bool isValidCheck(const CarConfig& config);
-void printCarInfo(const CarConfig& config);
-void runProducedCar(const CarConfig& config);
-void testProducedCar(const CarConfig& config);

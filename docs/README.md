@@ -92,9 +92,9 @@ CarAssembly/
     │   ├── IEngine.h / IBrakeSystem.h / ISteeringSystem.h  # 부품 인터페이스
     │   └── Engine.h / BrakeSystem.h / SteeringSystem.h     # 구체 부품 클래스
     └── tests/
-        ├── AssembleTest.cpp               # isValidCheck() 단위 테스트 54개
-        ├── CarValidatorTest.cpp           # CarValidator::isValid() 단위 테스트 54개
-        └── CarAssemblerTest.cpp           # validateInput() · buildCar() 단위 테스트 22개
+        ├── AssembleTest.cpp               # isValidCheck() 단위 테스트
+        ├── CarValidatorTest.cpp           # CarValidator::isValid() 단위 테스트
+        └── CarAssemblerTest.cpp           # validateInput() · buildCar() 단위 테스트
 ```
 
 

@@ -2,14 +2,97 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <map>
 #include <thread>
 #include <chrono>
 
 #define CLEAR_SCREEN "\033[H\033[2J"
 
+static const int SELECTION_DELAY_MS     = 800;
+static const int RESULT_DELAY_MS        = 2000;
+static const int TEST_PROGRESS_DELAY_MS = 1500;
+
 static void delay(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
+static bool parseInput(const std::string& line, int& answer)
+{
+    try
+    {
+        size_t pos;
+        answer = std::stoi(line, &pos);
+        if (pos != line.size())
+            throw std::invalid_argument("");
+        return true;
+    }
+    catch (const std::exception&)
+    {
+        printf("ERROR :: 숫자만 입력 가능\n");
+        return false;
+    }
+}
+
+static void applyCarTypeSelection(int answer, CarConfig& config)
+{
+    config.carType = static_cast<CarType>(answer);
+    static const char* names[] = { "", "Sedan", "SUV", "Truck" };
+    printf("차량 타입으로 %s을 선택하셨습니다.\n", names[answer]);
+}
+
+static void applyEngineSelection(int answer, CarConfig& config)
+{
+    config.engine = static_cast<Engine>(answer);
+    static const char* names[] = { "", "GM", "TOYOTA", "WIA" };
+    if (answer >= 1 && answer <= 3)
+        printf("%s 엔진을 선택하셨습니다.\n", names[answer]);
+}
+
+static void applyBrakeSystemSelection(int answer, CarConfig& config)
+{
+    config.brakeSystem = static_cast<BrakeSystem>(answer);
+    static const char* names[] = { "", "MANDO", "CONTINENTAL", "BOSCH" };
+    printf("%s 제동장치를 선택하셨습니다.\n", names[answer]);
+}
+
+static void applySteeringSystemSelection(int answer, CarConfig& config)
+{
+    config.steeringSystem = static_cast<SteeringSystem>(answer);
+    static const char* names[] = { "", "BOSCH", "MOBIS" };
+    printf("%s 조향장치를 선택하셨습니다.\n", names[answer]);
+}
+
+static void runCar(const Car& car)
+{
+    CarValidator validator;
+    if (!validator.isValid(car))
+    {
+        printf("자동차가 동작되지 않습니다\n");
+    }
+    else if (car.getEngine()->engineType() == Engine::BROKEN)
+    {
+        printf("엔진이 고장나있습니다.\n");
+        printf("자동차가 움직이지 않습니다.\n");
+    }
+    else
+    {
+        car.printInfo();
+        printf("자동차가 동작됩니다.\n");
+    }
+    delay(RESULT_DELAY_MS);
+}
+
+static void testCar(const Car& car)
+{
+    CarValidator validator;
+    printf("Test...\n");
+    delay(TEST_PROGRESS_DELAY_MS);
+    if (!validator.isValid(car))
+        printf("자동차 부품 조합 테스트 결과 : FAIL\n");
+    else
+        printf("자동차 부품 조합 테스트 결과 : PASS\n");
+    delay(RESULT_DELAY_MS);
 }
 
 void CarAssembler::run()
@@ -21,117 +104,46 @@ void CarAssembler::run()
     while (true)
     {
         printMenu(step);
-
         printf("INPUT > ");
         std::getline(std::cin, line);
         if (!line.empty() && line.back() == '\r')
             line.pop_back();
 
-        if (line == "exit")
-        {
-            printf("바이바이\n");
-            break;
-        }
+        if (line == "exit") { printf("바이바이\n"); break; }
 
         int answer;
-        try
-        {
-            size_t pos;
-            answer = std::stoi(line, &pos);
-            if (pos != line.size())
-                throw std::invalid_argument("");
-        }
-        catch (const std::exception&)
-        {
-            printf("ERROR :: 숫자만 입력 가능\n");
-            delay(800);
-            continue;
-        }
+        if (!parseInput(line, answer))        { delay(SELECTION_DELAY_MS); continue; }
+        if (!validateInput(step, answer))     { delay(SELECTION_DELAY_MS); continue; }
 
-        if (!validateInput(step, answer))
-        {
-            delay(800);
-            continue;
-        }
+        if (answer == 0 && step == Run_Test)  { step = CarType_Q; continue; }
+        if (answer == 0 && step >= 1)         { step -= 1;        continue; }
 
-        if (answer == 0 && step == Run_Test)
+        switch (step)
         {
-            step = CarType_Q;
-            continue;
-        }
-
-        if (answer == 0 && step >= 1)
-        {
-            step -= 1;
-            continue;
-        }
-
-        if (step == CarType_Q)
-        {
-            config.carType = static_cast<CarType>(answer);
-            if (answer == 1) printf("차량 타입으로 Sedan을 선택하셨습니다.\n");
-            if (answer == 2) printf("차량 타입으로 SUV을 선택하셨습니다.\n");
-            if (answer == 3) printf("차량 타입으로 Truck을 선택하셨습니다.\n");
-            delay(800);
+        case CarType_Q:
+            applyCarTypeSelection(answer, config);
+            delay(SELECTION_DELAY_MS);
             step = Engine_Q;
-        }
-        else if (step == Engine_Q)
-        {
-            config.engine = static_cast<Engine>(answer);
-            if (answer == 1) printf("GM 엔진을 선택하셨습니다.\n");
-            if (answer == 2) printf("TOYOTA 엔진을 선택하셨습니다.\n");
-            if (answer == 3) printf("WIA 엔진을 선택하셨습니다.\n");
-            delay(800);
+            break;
+        case Engine_Q:
+            applyEngineSelection(answer, config);
+            delay(SELECTION_DELAY_MS);
             step = BrakeSystem_Q;
-        }
-        else if (step == BrakeSystem_Q)
-        {
-            config.brakeSystem = static_cast<BrakeSystem>(answer);
-            if (answer == 1) printf("MANDO 제동장치를 선택하셨습니다.\n");
-            if (answer == 2) printf("CONTINENTAL 제동장치를 선택하셨습니다.\n");
-            if (answer == 3) printf("BOSCH 제동장치를 선택하셨습니다.\n");
-            delay(800);
+            break;
+        case BrakeSystem_Q:
+            applyBrakeSystemSelection(answer, config);
+            delay(SELECTION_DELAY_MS);
             step = SteeringSystem_Q;
-        }
-        else if (step == SteeringSystem_Q)
-        {
-            config.steeringSystem = static_cast<SteeringSystem>(answer);
-            if (answer == 1) printf("BOSCH 조향장치를 선택하셨습니다.\n");
-            if (answer == 2) printf("MOBIS 조향장치를 선택하셨습니다.\n");
-            delay(800);
+            break;
+        case SteeringSystem_Q:
+            applySteeringSystemSelection(answer, config);
+            delay(SELECTION_DELAY_MS);
             step = Run_Test;
-        }
-        else if (step == Run_Test && answer == 1)
-        {
-            Car car = buildCar(config);
-            CarValidator validator;
-            if (!validator.isValid(car))
-            {
-                printf("자동차가 동작되지 않습니다\n");
-            }
-            else if (config.engine == Engine::BROKEN)
-            {
-                printf("엔진이 고장나있습니다.\n");
-                printf("자동차가 움직이지 않습니다.\n");
-            }
-            else
-            {
-                car.printInfo();
-                printf("자동차가 동작됩니다.\n");
-            }
-            delay(2000);
-        }
-        else if (step == Run_Test && answer == 2)
-        {
-            Car car = buildCar(config);
-            CarValidator validator;
-            printf("Test...\n");
-            delay(1500);
-            if (!validator.isValid(car))
-                printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-            else
-                printf("자동차 부품 조합 테스트 결과 : PASS\n");
-            delay(2000);
+            break;
+        case Run_Test:
+            if (answer == 1) runCar(buildCar(config));
+            else             testCar(buildCar(config));
+            break;
         }
     }
 }
@@ -223,29 +235,20 @@ bool CarAssembler::validateInput(int step, int answer) const
 
 Car CarAssembler::buildCar(const CarConfig& config)
 {
-    IEngine* engine = nullptr;
-    switch (config.engine)
-    {
-    case Engine::GM:     engine = &m_gmEngine;     break;
-    case Engine::TOYOTA: engine = &m_toyotaEngine; break;
-    case Engine::WIA:    engine = &m_wiaEngine;    break;
-    case Engine::BROKEN: engine = &m_brokenEngine; break;
-    }
-
-    IBrakeSystem* brakeSystem = nullptr;
-    switch (config.brakeSystem)
-    {
-    case BrakeSystem::MANDO:       brakeSystem = &m_mandoBrake;       break;
-    case BrakeSystem::CONTINENTAL: brakeSystem = &m_continentalBrake; break;
-    case BrakeSystem::BOSCH:       brakeSystem = &m_boschBrake;       break;
-    }
-
-    ISteeringSystem* steeringSystem = nullptr;
-    switch (config.steeringSystem)
-    {
-    case SteeringSystem::BOSCH: steeringSystem = &m_boschSteering; break;
-    case SteeringSystem::MOBIS: steeringSystem = &m_mobisSteering; break;
-    }
-
-    return Car(config.carType, engine, brakeSystem, steeringSystem);
+    std::map<Engine, IEngine*> engineMap = {
+        { Engine::GM,     &m_gmEngine     },
+        { Engine::TOYOTA, &m_toyotaEngine },
+        { Engine::WIA,    &m_wiaEngine    },
+        { Engine::BROKEN, &m_brokenEngine },
+    };
+    std::map<BrakeSystem, IBrakeSystem*> brakeMap = {
+        { BrakeSystem::MANDO,       &m_mandoBrake       },
+        { BrakeSystem::CONTINENTAL, &m_continentalBrake },
+        { BrakeSystem::BOSCH,       &m_boschBrake       },
+    };
+    std::map<SteeringSystem, ISteeringSystem*> steeringMap = {
+        { SteeringSystem::BOSCH, &m_boschSteering },
+        { SteeringSystem::MOBIS, &m_mobisSteering },
+    };
+    return Car(config.carType, engineMap.at(config.engine), brakeMap.at(config.brakeSystem), steeringMap.at(config.steeringSystem));
 }

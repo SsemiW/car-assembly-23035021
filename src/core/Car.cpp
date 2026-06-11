@@ -12,9 +12,8 @@ ISteeringSystem* Car::getSteeringSystem() const { return m_steeringSystem; }
 
 void Car::printInfo() const
 {
-    if (m_type == CarType::SEDAN) printf("Car Type : Sedan\n");
-    if (m_type == CarType::SUV)   printf("Car Type : SUV\n");
-    if (m_type == CarType::TRUCK) printf("Car Type : Truck\n");
+    static const char* carTypeNames[] = { "", "Sedan", "SUV", "Truck" };
+    printf("Car Type : %s\n", carTypeNames[static_cast<int>(m_type)]);
     printf("Engine : %s\n", m_engine->name().c_str());
     printf("Brake System : %s\n", m_brakeSystem->name().c_str());
     printf("SteeringSystem : %s\n", m_steeringSystem->name().c_str());
