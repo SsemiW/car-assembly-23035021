@@ -127,26 +127,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assemble.cpp" />
-    <ClCompile Include="assemble_test.cpp">
+    <ClCompile Include="src\core\assemble.cpp" />
+    <ClCompile Include="src\tests\assemble_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Car.cpp" />
-    <ClCompile Include="CarAssembler.cpp" />
-    <ClCompile Include="CarValidator.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\Car.cpp" />
+    <ClCompile Include="src\core\CarAssembler.cpp" />
+    <ClCompile Include="src\core\CarValidator.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="assemble.h" />
-    <ClInclude Include="Car.h" />
-    <ClInclude Include="CarAssembler.h" />
-    <ClInclude Include="CarValidator.h" />
-    <ClInclude Include="parts\BrakeSystem.h" />
-    <ClInclude Include="parts\Engine.h" />
-    <ClInclude Include="parts\IBrakeSystem.h" />
-    <ClInclude Include="parts\IEngine.h" />
-    <ClInclude Include="parts\ISteeringSystem.h" />
-    <ClInclude Include="parts\SteeringSystem.h" />
+    <ClInclude Include="src\core\assemble.h" />
+    <ClInclude Include="src\core\Car.h" />
+    <ClInclude Include="src\core\CarAssembler.h" />
+    <ClInclude Include="src\core\CarValidator.h" />
+    <ClInclude Include="src\parts\BrakeSystem.h" />
+    <ClInclude Include="src\parts\Engine.h" />
+    <ClInclude Include="src\parts\IBrakeSystem.h" />
+    <ClInclude Include="src\parts\IEngine.h" />
+    <ClInclude Include="src\parts\ISteeringSystem.h" />
+    <ClInclude Include="src\parts\SteeringSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

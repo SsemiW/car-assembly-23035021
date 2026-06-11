@@ -72,3 +72,23 @@ CarAssembly.slnx 를 Visual Studio에서 열고 빌드
 
 - 레거시 소스코드: https://github.com/mincoding-ai/assemblyCar
 - 관련 자료: `docs/[CRA_AI] Day2_1_Agentic Engineering.pdf` (p.20~24)
+
+
+## 최종 파일 구조
+
+```
+CarAssembly/
+├── CarAssembly.vcxproj
+└── src/
+    ├── main.cpp
+    ├── core/
+    │   ├── assemble.h / assemble.cpp      # enum class, CarConfig, isValidCheck()
+    │   ├── Car.h / Car.cpp                # 선택된 부품 보유 및 출력
+    │   ├── CarAssembler.h / CarAssembler.cpp  # UI 루프 및 Car 조립
+    │   └── CarValidator.h / CarValidator.cpp  # 조합 유효성 검증
+    ├── parts/
+    │   ├── IEngine.h / IBrakeSystem.h / ISteeringSystem.h  # 부품 인터페이스
+    │   └── Engine.h / BrakeSystem.h / SteeringSystem.h     # 구체 부품 클래스
+    └── tests/
+        └── assemble_test.cpp              # isValidCheck() 단위 테스트 54개
+```

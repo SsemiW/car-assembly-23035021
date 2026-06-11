@@ -1,8 +1,8 @@
 #pragma once
 #include "assemble.h"
-#include "parts/IEngine.h"
-#include "parts/IBrakeSystem.h"
-#include "parts/ISteeringSystem.h"
+#include "../parts/IEngine.h"
+#include "../parts/IBrakeSystem.h"
+#include "../parts/ISteeringSystem.h"
 
 class Car
 {

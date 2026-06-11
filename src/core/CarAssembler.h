@@ -2,9 +2,9 @@
 #include "assemble.h"
 #include "Car.h"
 #include "CarValidator.h"
-#include "parts/Engine.h"
-#include "parts/BrakeSystem.h"
-#include "parts/SteeringSystem.h"
+#include "../parts/Engine.h"
+#include "../parts/BrakeSystem.h"
+#include "../parts/SteeringSystem.h"
 
 class CarAssembler
 {
