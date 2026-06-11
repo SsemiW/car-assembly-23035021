@@ -131,10 +131,22 @@
     <ClCompile Include="assemble_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Car.cpp" />
+    <ClCompile Include="CarAssembler.cpp" />
+    <ClCompile Include="CarValidator.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="assemble.h" />
+    <ClInclude Include="Car.h" />
+    <ClInclude Include="CarAssembler.h" />
+    <ClInclude Include="CarValidator.h" />
+    <ClInclude Include="parts\BrakeSystem.h" />
+    <ClInclude Include="parts\Engine.h" />
+    <ClInclude Include="parts\IBrakeSystem.h" />
+    <ClInclude Include="parts\IEngine.h" />
+    <ClInclude Include="parts\ISteeringSystem.h" />
+    <ClInclude Include="parts\SteeringSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
