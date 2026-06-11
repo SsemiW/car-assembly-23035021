@@ -75,33 +75,8 @@ void runProducedCar(const CarConfig& config)
 
 void testProducedCar(const CarConfig& config)
 {
-    if (config.carType == CarType::SEDAN && config.brakeSystem == BrakeSystem::CONTINENTAL)
-    {
+    if (!isValidCheck(config))
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-        printf("Sedan에는 Continental제동장치 사용 불가\n");
-    }
-    else if (config.carType == CarType::SUV && config.engine == Engine::TOYOTA)
-    {
-        printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-        printf("SUV에는 TOYOTA엔진 사용 불가\n");
-    }
-    else if (config.carType == CarType::TRUCK && config.engine == Engine::WIA)
-    {
-        printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-        printf("Truck에는 WIA엔진 사용 불가\n");
-    }
-    else if (config.carType == CarType::TRUCK && config.brakeSystem == BrakeSystem::MANDO)
-    {
-        printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-        printf("Truck에는 Mando제동장치 사용 불가\n");
-    }
-    else if (config.brakeSystem == BrakeSystem::BOSCH && config.steeringSystem != SteeringSystem::BOSCH)
-    {
-        printf("자동차 부품 조합 테스트 결과 : FAIL\n");
-        printf("Bosch제동장치에는 Bosch조향장치 이외 사용 불가\n");
-    }
     else
-    {
         printf("자동차 부품 조합 테스트 결과 : PASS\n");
-    }
 }
