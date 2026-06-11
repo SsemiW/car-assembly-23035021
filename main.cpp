@@ -16,16 +16,6 @@ int main()
 
 #define CLEAR_SCREEN "\033[H\033[2J"
 
-int stack[10];
-
-void selectCarType(int answer);
-void selectEngine(int answer);
-void selectbrakeSystem(int answer);
-void selectSteeringSystem(int answer);
-void runProducedCar();
-void testProducedCar();
-void delay(int ms);
-
 enum QuestionType
 {
     CarType_Q,
@@ -35,32 +25,50 @@ enum QuestionType
     Run_Test,
 };
 
-enum CarType
+enum class CarType
 {
     SEDAN = 1,
     SUV,
     TRUCK
 };
 
-enum Engine
+enum class Engine
 {
     GM = 1,
     TOYOTA,
-    WIA
+    WIA,
+    BROKEN
 };
 
-enum brakeSystem
+enum class BrakeSystem
 {
     MANDO = 1,
     CONTINENTAL,
-    BOSCH_B
+    BOSCH
 };
 
-enum SteeringSystem
+enum class SteeringSystem
 {
-    BOSCH_S = 1,
+    BOSCH = 1,
     MOBIS
 };
+
+struct CarConfig
+{
+    CarType        carType        = CarType::SEDAN;
+    Engine         engine         = Engine::GM;
+    BrakeSystem    brakeSystem    = BrakeSystem::MANDO;
+    SteeringSystem steeringSystem = SteeringSystem::BOSCH;
+};
+
+void selectCarType(int answer, CarConfig& config);
+void selectEngine(int answer, CarConfig& config);
+void selectbrakeSystem(int answer, CarConfig& config);
+void selectSteeringSystem(int answer, CarConfig& config);
+void runProducedCar(const CarConfig& config);
+void testProducedCar(const CarConfig& config);
+int isValidCheck(const CarConfig& config);
+void delay(int ms);
 
 void delay(int ms)
 {
@@ -81,6 +89,7 @@ int main()
 {
     char buf[100];
     int step = CarType_Q;
+    CarConfig config;
 
     while (1)
     {
@@ -215,46 +224,46 @@ int main()
 
         if (step == CarType_Q)
         {
-            selectCarType(answer);
+            selectCarType(answer, config);
             delay(800);
             step = Engine_Q;
         }
         else if (step == Engine_Q)
         {
-            selectEngine(answer);
+            selectEngine(answer, config);
             delay(800);
             step = brakeSystem_Q;
         }
         else if (step == brakeSystem_Q)
         {
-            selectbrakeSystem(answer);
+            selectbrakeSystem(answer, config);
             delay(800);
             step = SteeringSystem_Q;
         }
         else if (step == SteeringSystem_Q)
         {
-            selectSteeringSystem(answer);
+            selectSteeringSystem(answer, config);
             delay(800);
             step = Run_Test;
         }
         else if (step == Run_Test && answer == 1)
         {
-            runProducedCar();
+            runProducedCar(config);
             delay(2000);
         }
         else if (step == Run_Test && answer == 2)
         {
             printf("Test...\n");
             delay(1500);
-            testProducedCar();
+            testProducedCar(config);
             delay(2000);
         }
     }
 }
 
-void selectCarType(int answer)
+void selectCarType(int answer, CarConfig& config)
 {
-    stack[CarType_Q] = answer;
+    config.carType = static_cast<CarType>(answer);
     if (answer == 1)
         printf("차량 타입으로 Sedan을 선택하셨습니다.\n");
     if (answer == 2)
@@ -263,9 +272,9 @@ void selectCarType(int answer)
         printf("차량 타입으로 Truck을 선택하셨습니다.\n");
 }
 
-void selectEngine(int answer)
+void selectEngine(int answer, CarConfig& config)
 {
-    stack[Engine_Q] = answer;
+    config.engine = static_cast<Engine>(answer);
     if (answer == 1)
         printf("GM 엔진을 선택하셨습니다.\n");
     if (answer == 2)
@@ -274,9 +283,9 @@ void selectEngine(int answer)
         printf("WIA 엔진을 선택하셨습니다.\n");
 }
 
-void selectbrakeSystem(int answer)
+void selectbrakeSystem(int answer, CarConfig& config)
 {
-    stack[brakeSystem_Q] = answer;
+    config.brakeSystem = static_cast<BrakeSystem>(answer);
     if (answer == 1)
         printf("MANDO 제동장치를 선택하셨습니다.\n");
     if (answer == 2)
@@ -285,34 +294,34 @@ void selectbrakeSystem(int answer)
         printf("BOSCH 제동장치를 선택하셨습니다.\n");
 }
 
-void selectSteeringSystem(int answer)
+void selectSteeringSystem(int answer, CarConfig& config)
 {
-    stack[SteeringSystem_Q] = answer;
+    config.steeringSystem = static_cast<SteeringSystem>(answer);
     if (answer == 1)
         printf("BOSCH 조향장치를 선택하셨습니다.\n");
     if (answer == 2)
         printf("MOBIS 조향장치를 선택하셨습니다.\n");
 }
 
-int isValidCheck()
+int isValidCheck(const CarConfig& config)
 {
-    if (stack[CarType_Q] == SEDAN && stack[brakeSystem_Q] == CONTINENTAL)
+    if (config.carType == CarType::SEDAN && config.brakeSystem == BrakeSystem::CONTINENTAL)
     {
         return false;
     }
-    else if (stack[CarType_Q] == SUV && stack[Engine_Q] == TOYOTA)
+    else if (config.carType == CarType::SUV && config.engine == Engine::TOYOTA)
     {
         return false;
     }
-    else if (stack[CarType_Q] == TRUCK && stack[Engine_Q] == WIA)
+    else if (config.carType == CarType::TRUCK && config.engine == Engine::WIA)
     {
         return false;
     }
-    else if (stack[CarType_Q] == TRUCK && stack[brakeSystem_Q] == MANDO)
+    else if (config.carType == CarType::TRUCK && config.brakeSystem == BrakeSystem::MANDO)
     {
         return false;
     }
-    else if (stack[brakeSystem_Q] == BOSCH_B && stack[SteeringSystem_Q] != BOSCH_S)
+    else if (config.brakeSystem == BrakeSystem::BOSCH && config.steeringSystem != SteeringSystem::BOSCH)
     {
         return false;
     }
@@ -323,42 +332,42 @@ int isValidCheck()
     return true;
 }
 
-void runProducedCar()
+void runProducedCar(const CarConfig& config)
 {
-    if (isValidCheck() == false)
+    if (isValidCheck(config) == false)
     {
         printf("자동차가 동작되지 않습니다\n");
     }
     else
     {
-        if (stack[Engine_Q] == 4)
+        if (config.engine == Engine::BROKEN)
         {
             printf("엔진이 고장나있습니다.\n");
             printf("자동차가 움직이지 않습니다.\n");
         }
         else
         {
-            if (stack[CarType_Q] == 1)
+            if (config.carType == CarType::SEDAN)
                 printf("Car Type : Sedan\n");
-            if (stack[CarType_Q] == 2)
+            if (config.carType == CarType::SUV)
                 printf("Car Type : SUV\n");
-            if (stack[CarType_Q] == 3)
+            if (config.carType == CarType::TRUCK)
                 printf("Car Type : Truck\n");
-            if (stack[Engine_Q] == 1)
+            if (config.engine == Engine::GM)
                 printf("Engine : GM\n");
-            if (stack[Engine_Q] == 2)
+            if (config.engine == Engine::TOYOTA)
                 printf("Engine : TOYOTA\n");
-            if (stack[Engine_Q] == 3)
+            if (config.engine == Engine::WIA)
                 printf("Engine : WIA\n");
-            if (stack[brakeSystem_Q] == 1)
+            if (config.brakeSystem == BrakeSystem::MANDO)
                 printf("Brake System : Mando\n");
-            if (stack[brakeSystem_Q] == 2)
+            if (config.brakeSystem == BrakeSystem::CONTINENTAL)
                 printf("Brake System : Continental\n");
-            if (stack[brakeSystem_Q] == 3)
+            if (config.brakeSystem == BrakeSystem::BOSCH)
                 printf("Brake System : Bosch\n");
-            if (stack[SteeringSystem_Q] == 1)
+            if (config.steeringSystem == SteeringSystem::BOSCH)
                 printf("SteeringSystem : Bosch\n");
-            if (stack[SteeringSystem_Q] == 2)
+            if (config.steeringSystem == SteeringSystem::MOBIS)
                 printf("SteeringSystem : Mobis\n");
 
             printf("자동차가 동작됩니다.\n");
@@ -366,29 +375,29 @@ void runProducedCar()
     }
 }
 
-void testProducedCar()
+void testProducedCar(const CarConfig& config)
 {
-    if (stack[CarType_Q] == SEDAN && stack[brakeSystem_Q] == CONTINENTAL)
+    if (config.carType == CarType::SEDAN && config.brakeSystem == BrakeSystem::CONTINENTAL)
     {
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
         printf("Sedan에는 Continental제동장치 사용 불가\n");
     }
-    else if (stack[CarType_Q] == SUV && stack[Engine_Q] == TOYOTA)
+    else if (config.carType == CarType::SUV && config.engine == Engine::TOYOTA)
     {
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
         printf("SUV에는 TOYOTA엔진 사용 불가\n");
     }
-    else if (stack[CarType_Q] == TRUCK && stack[Engine_Q] == WIA)
+    else if (config.carType == CarType::TRUCK && config.engine == Engine::WIA)
     {
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
         printf("Truck에는 WIA엔진 사용 불가\n");
     }
-    else if (stack[CarType_Q] == TRUCK && stack[brakeSystem_Q] == MANDO)
+    else if (config.carType == CarType::TRUCK && config.brakeSystem == BrakeSystem::MANDO)
     {
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
         printf("Truck에는 Mando제동장치 사용 불가\n");
     }
-    else if (stack[brakeSystem_Q] == BOSCH_B && stack[SteeringSystem_Q] != BOSCH_S)
+    else if (config.brakeSystem == BrakeSystem::BOSCH && config.steeringSystem != SteeringSystem::BOSCH)
     {
         printf("자동차 부품 조합 테스트 결과 : FAIL\n");
         printf("Bosch제동장치에는 Bosch조향장치 이외 사용 불가\n");
