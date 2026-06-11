@@ -12,8 +12,10 @@ int main()
 #else
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <string>
+#include <iostream>
+#include <thread>
+#include <chrono>
 #include "assemble.h"
 
 #define CLEAR_SCREEN "\033[H\033[2J"
@@ -29,28 +31,18 @@ enum QuestionType
 
 void selectCarType(int answer, CarConfig& config);
 void selectEngine(int answer, CarConfig& config);
-void selectbrakeSystem(int answer, CarConfig& config);
+void selectBrakeSystem(int answer, CarConfig& config);
 void selectSteeringSystem(int answer, CarConfig& config);
 void delay(int ms);
 
 void delay(int ms)
 {
-    volatile int sum = 0;
-    for (int i = 0; i < 1000; i++)
-    {
-        for (int j = 0; j < 1000; j++)
-        {
-            for (int t = 0; t < ms; t++)
-            {
-                sum++;
-            }
-        }
-    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 int main()
 {
-    char buf[100];
+    std::string line;
     int step = CarType_Q;
     CarConfig config;
 
@@ -111,25 +103,26 @@ int main()
         printf("===============================\n");
 
         printf("INPUT > ");
-        fgets(buf, sizeof(buf), stdin);
+        std::getline(std::cin, line);
+        if (!line.empty() && line.back() == '\r')
+            line.pop_back();
 
-        // 엔터 개행문자 제거
-        char* context = nullptr;
-        strtok_s(buf, "\r", &context);
-        strtok_s(buf, "\n", &context);
-
-        if (!strcmp(buf, "exit"))
+        if (line == "exit")
         {
             printf("바이바이\n");
             break;
         }
 
         // 숫자로 된 대답인지 확인
-        char* checkNumber;
-        int answer = strtol(buf, &checkNumber, 10); // 문자열을 10진수로 변환
-
-        // 입력받은 문자가 숫자가 아니라면
-        if (*checkNumber != '\0')
+        int answer;
+        try
+        {
+            size_t pos;
+            answer = std::stoi(line, &pos);
+            if (pos != line.size())
+                throw std::invalid_argument("");
+        }
+        catch (const std::exception&)
         {
             printf("ERROR :: 숫자만 입력 가능\n");
             delay(800);
@@ -199,7 +192,7 @@ int main()
         }
         else if (step == brakeSystem_Q)
         {
-            selectbrakeSystem(answer, config);
+            selectBrakeSystem(answer, config);
             delay(800);
             step = SteeringSystem_Q;
         }
@@ -246,7 +239,7 @@ void selectEngine(int answer, CarConfig& config)
         printf("WIA 엔진을 선택하셨습니다.\n");
 }
 
-void selectbrakeSystem(int answer, CarConfig& config)
+void selectBrakeSystem(int answer, CarConfig& config)
 {
     config.brakeSystem = static_cast<BrakeSystem>(answer);
     if (answer == 1)
